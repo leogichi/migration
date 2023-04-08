@@ -8,28 +8,21 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.leogichi.lgm.PokemonApp
 import com.leogichi.lgm.R
 import com.leogichi.lgm.databinding.FragmentPokemonsBinding
 import com.leogichi.lgm.domain.PokemonProvider
 import com.leogichi.lgm.infrastructure.HomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [PokemonsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class PokemonsFragment : Fragment() {
+@AndroidEntryPoint
+class PokemonsFragment  : Fragment() {
 
     lateinit var binding: FragmentPokemonsBinding
     lateinit var homeViewModel: HomeViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -44,11 +37,11 @@ class PokemonsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        homeViewModel.getPokemons()
+        homeViewModel.getPokemons("picachu")
         homeViewModel.pokemons.observe(viewLifecycleOwner){
             binding.list.adapter = PokemonAdapter(it)
-            binding.list.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL,false)
+             binding.list.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL,false)
+            }
         }
 
     }
-}
