@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.leogichi.lgm.PokemonApp
 import com.leogichi.lgm.R
 import com.leogichi.lgm.databinding.FragmentPokemonsBinding
-import com.leogichi.lgm.domain.PokemonProvider
+import com.leogichi.lgm.domain.models.Pokemon
 import com.leogichi.lgm.infrastructure.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.text.Typography.dagger
 
 @AndroidEntryPoint
 class PokemonsFragment  : Fragment() {
@@ -39,9 +40,17 @@ class PokemonsFragment  : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         homeViewModel.getPokemons("picachu")
         homeViewModel.pokemons.observe(viewLifecycleOwner){
-            binding.list.adapter = PokemonAdapter(it)
-             binding.list.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL,false)
+            when(it){
+                is ResultState.Error -> {}
+                is ResultState.Loading -> {}
+                is ResultState.Success<*> -> {
+                    binding.list.adapter = PokemonAdapter(it as List<Pokemon>)
+                    binding.list.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL,false)
+                }
+                else -> {}
             }
-        }
 
+        }
     }
+
+}
