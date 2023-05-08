@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,11 +41,14 @@ class PokemonsFragment  : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         homeViewModel.getPokemons("pikachu")
         lifecycleScope.launch {
-            homeViewModel.pokemons.collect{
+            homeViewModel.pokemon.collect{
                 when(it){
                     is ResultState.Error -> {}
-                    is ResultState.Loading -> {}
+                    is ResultState.Loading -> {
+                        binding.progressBar.isVisible = true
+                    }
                     is ResultState.Success<*> -> {
+                        binding.progressBar.isVisible = false
                         binding.list.adapter = PokemonAdapter(listOf( it.data) as List<Pokemon>)
                         binding.list.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL,false)
                     }

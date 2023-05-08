@@ -9,6 +9,7 @@ import com.leogichi.lgm.usecases.GetPokemons
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,19 +17,15 @@ import kotlin.text.Typography.dagger
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(val getPokemonsUseCase: GetPokemons): ViewModel() {
-    private var pokemonName = ""
-    private val _pokemons  =
-        flow {
-            val result =  getPokemonsUseCase(pokemonName)
-            emit(ResultState.Loading)
-            emit(result)
-        }
 
-    // = MutableLiveData<ResultState?>(null)
-    val pokemons  get() = _pokemons
+    private val _pokemon = MutableStateFlow<ResultState>(ResultState.Loading)
+    val pokemon  get() = _pokemon
 
      fun getPokemons(pokemonName:String){
-        this.pokemonName = pokemonName
+        viewModelScope.launch {
+            _pokemon.emit(getPokemonsUseCase.invoke(pokemonName))
+        }
+
     }
 
 }
