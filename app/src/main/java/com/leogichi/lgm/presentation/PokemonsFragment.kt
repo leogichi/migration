@@ -6,16 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.leogichi.lgm.PokemonApp
-import com.leogichi.lgm.R
 import com.leogichi.lgm.databinding.FragmentPokemonsBinding
 import com.leogichi.lgm.domain.models.Pokemon
+import com.leogichi.lgm.domain.models.Pokemons
 import com.leogichi.lgm.infrastructure.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
-import kotlin.text.Typography.dagger
+import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class PokemonsFragment  : Fragment() {
@@ -38,19 +38,21 @@ class PokemonsFragment  : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        homeViewModel.getPokemons("picachu")
-        homeViewModel.pokemons.observe(viewLifecycleOwner){
-            when(it){
-                is ResultState.Error -> {}
-                is ResultState.Loading -> {}
-                is ResultState.Success<*> -> {
-                    binding.list.adapter = PokemonAdapter(it as List<Pokemon>)
-                    binding.list.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL,false)
+        homeViewModel.getPokemons("pikachu")
+        lifecycleScope.launch {
+            homeViewModel.pokemons.collect{
+                when(it){
+                    is ResultState.Error -> {}
+                    is ResultState.Loading -> {}
+                    is ResultState.Success<*> -> {
+                        binding.list.adapter = PokemonAdapter(listOf( it.data) as List<Pokemon>)
+                        binding.list.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL,false)
+                    }
+                    else -> {}
                 }
-                else -> {}
             }
-
         }
+
     }
 
 }
